@@ -4,8 +4,11 @@
   "description": "",
   "main": "app.js",
   "scripts": {
-    "test": "jest",
-    "build": "babel src -d lib"
+    "test": "jest --no-cache --runInBand",
+    "build:ts": "tsc",
+    "build": "echo Building... && npm run build:ts && npm run build:copyjs && npm run build:babel",
+    "build:copyjs": "rsync -R `find ./src -name \\*.js*` build/",
+    "build:babel": "babel build/src --out-dir dist --copy-files"
   },
   "keywords": [],
   "author": "John Johnson",

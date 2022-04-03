@@ -6,7 +6,7 @@ const robot = new Robot(Direction.NORTH);
 const grid = new Grid(4, 4, robot);
 
 beforeEach(() => {
-  grid.initialiseTable();
+  grid.initialiseGrid();
 });
 
 test('Robot is placed in correct spot', () => {
@@ -43,7 +43,6 @@ describe('testing basic directional movements', () => {
     const expectedResult = 'Output: 4, 2, EAST';
 
     grid.placeRobot(2, 2, Direction.EAST);
-    console.log(grid.getRobotLocation())
 
     grid.move();
     grid.move();

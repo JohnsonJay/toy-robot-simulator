@@ -11,6 +11,9 @@ export class Grid {
     private robot: Robot
   ) {}
 
+  /**
+   * Returns the current position of the robot OR undefined if it does not yet exist
+   */
   private findRobot(): GridBlock | undefined {
     let robotLocation = null;
 
@@ -30,9 +33,13 @@ export class Grid {
     }
   }
 
-  public initialiseTable(): void {
+  /**
+   * Initialises the grid and resets all values
+   * */
+  public initialiseGrid(): void {
     // Create a 2D array so that we can closely resemble rows & columns
-
+    // y = columns
+    // x  = rows
     for (let yCoordinate = 0; yCoordinate <= this.xLength; yCoordinate++) {
       const row: GridBlock[] = [];
 
@@ -49,14 +56,23 @@ export class Grid {
     }
   }
 
+  /**
+   * Returns current direction that the robot is facing
+   * */
   public getRobotDirection(): string {
     return this.robot.getDirection();
   }
 
+  /**
+   * Changes direction that the robot is facing
+   * */
   public changeDirection(direction: string): void {
     this.robot.changeDirection(direction)
   }
 
+  /**
+   * Rotates the robot 90 degrees in the direction that is specified
+   * */
   public turnRobot(direction: string): void {
     if (direction.toUpperCase() === 'LEFT') {
       this.robot.turnLeft();
@@ -65,23 +81,38 @@ export class Grid {
     }
   }
 
+  /**
+   * Places robot in the specified location, facing in the specified direction
+   * */
   public placeRobot(x: number, y: number, direction: string): void {
-    const currentLocation = this.findRobot();
-    if (currentLocation) {
-      this.tableGrid[currentLocation.yCoordinate][currentLocation.xCoordinate].isRobotPresent = false;
-    }
+    if (x < 0 || x > this.xLength || y < 0 || y > this.yLength) {
+      console.error('This area of the grid does not exist');
+    } else {
+      const currentLocation = this.findRobot();
+      if (currentLocation) {
+        this.tableGrid[currentLocation.yCoordinate][currentLocation.xCoordinate].isRobotPresent = false;
+      }
 
-    this.tableGrid[y][x].isRobotPresent = true;
-    this.robot.changeDirection(direction);
+      this.tableGrid[y][x].isRobotPresent = true;
+      this.robot.changeDirection(direction);
+    }
   }
 
-  public getRobotLocation() {
+  /**
+   * Returns robot location
+   * */
+  public getRobotLocation(): string | undefined {
     const robotLocation = this.findRobot();
     if (robotLocation) {
       return `Output: ${ robotLocation.xCoordinate }, ${ robotLocation.yCoordinate }, ${ this.getRobotDirection() }`;
+    } else {
+      return undefined;
     }
   }
 
+  /**
+   * Moves the robot one step in the position that it is facing
+   * */
   public move(): void {
     // get robot direction, so we know which way we're facing
     const direction = this.robot.getDirection();
