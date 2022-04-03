@@ -31,15 +31,15 @@ export class Grid {
   }
 
   public initialiseTable(): void {
+    // Create a 2D array so that we can closely resemble rows & columns
 
-    // starting backwards so that we our "columns" & "rows" are in the correct order
-    for (let xCoordinate = 0; xCoordinate <= this.xLength; xCoordinate++) {
+    for (let yCoordinate = 0; yCoordinate <= this.xLength; yCoordinate++) {
       const row: GridBlock[] = [];
 
-      for (let yCoordinate = 0; yCoordinate <= this.yLength; yCoordinate++) {
+      for (let xCoordinate = 0; xCoordinate <= this.yLength; xCoordinate++) {
         const gridBlock: GridBlock = {
-          xCoordinate,
           yCoordinate,
+          xCoordinate,
           isRobotPresent: false
         };
 
@@ -66,18 +66,19 @@ export class Grid {
   }
 
   public placeRobot(x: number, y: number, direction: string): void {
+    const currentLocation = this.findRobot();
+    if (currentLocation) {
+      this.tableGrid[currentLocation.yCoordinate][currentLocation.xCoordinate].isRobotPresent = false;
+    }
+
+    this.tableGrid[y][x].isRobotPresent = true;
     this.robot.changeDirection(direction);
-    this.tableGrid[x][y].isRobotPresent = true;
   }
 
   public getRobotLocation() {
     const robotLocation = this.findRobot();
     if (robotLocation) {
-      return {
-        x: robotLocation.xCoordinate,
-        y: robotLocation.yCoordinate,
-        direction: this.getRobotDirection()
-      }
+      return `Output: ${ robotLocation.xCoordinate }, ${ robotLocation.yCoordinate }, ${ this.getRobotDirection() }`;
     }
   }
 
@@ -90,39 +91,39 @@ export class Grid {
     if (robotLocation) {
       if (direction === Direction.NORTH) {
         // check we can actually move up
-        if (this.tableGrid[robotLocation.xCoordinate + 1]) {
+        if (this.tableGrid[robotLocation.yCoordinate + 1]) {
           // set new robot location
-          this.tableGrid[robotLocation.xCoordinate + 1][robotLocation.yCoordinate].isRobotPresent = true;
+          this.tableGrid[robotLocation.yCoordinate + 1][robotLocation.xCoordinate].isRobotPresent = true;
           // remove previous robot location
-          this.tableGrid[robotLocation.xCoordinate][robotLocation.yCoordinate].isRobotPresent = false;
+          this.tableGrid[robotLocation.yCoordinate][robotLocation.xCoordinate].isRobotPresent = false;
         } else {
           console.error('You cannot move in that direction');
         }
 
       } else if (direction === Direction.SOUTH) {
-        if (this.tableGrid[robotLocation.xCoordinate - 1]) {
+        if (this.tableGrid[robotLocation.yCoordinate - 1]) {
           // set new robot location
-          this.tableGrid[robotLocation.xCoordinate - 1][robotLocation.yCoordinate].isRobotPresent = true;
+          this.tableGrid[robotLocation.yCoordinate - 1][robotLocation.xCoordinate].isRobotPresent = true;
           // remove previous robot location
-          this.tableGrid[robotLocation.xCoordinate][robotLocation.yCoordinate].isRobotPresent = false;
+          this.tableGrid[robotLocation.yCoordinate][robotLocation.xCoordinate].isRobotPresent = false;
         } else {
           console.error('You cannot move in that direction');
         }
       } else if (direction === Direction.WEST) {
-        if (this.tableGrid[robotLocation.xCoordinate][robotLocation.yCoordinate - 1]){
+        if (this.tableGrid[robotLocation.yCoordinate][robotLocation.xCoordinate - 1]){
           // set new robot location
-          this.tableGrid[robotLocation.xCoordinate][robotLocation.yCoordinate - 1].isRobotPresent = true;
+          this.tableGrid[robotLocation.yCoordinate][robotLocation.xCoordinate - 1].isRobotPresent = true;
           // remove previous robot location
-          this.tableGrid[robotLocation.xCoordinate][robotLocation.yCoordinate].isRobotPresent = false;
+          this.tableGrid[robotLocation.yCoordinate][robotLocation.xCoordinate].isRobotPresent = false;
         } else {
           console.error('You cannot move in that direction');
         }
       } else if (direction === Direction.EAST) {
-        if (this.tableGrid[robotLocation.xCoordinate][robotLocation.yCoordinate + 1]){
+        if (this.tableGrid[robotLocation.yCoordinate][robotLocation.xCoordinate + 1]){
           // set new robot location
-          this.tableGrid[robotLocation.xCoordinate][robotLocation.yCoordinate + 1].isRobotPresent = true;
+          this.tableGrid[robotLocation.yCoordinate][robotLocation.xCoordinate + 1].isRobotPresent = true;
           // remove previous robot location
-          this.tableGrid[robotLocation.xCoordinate][robotLocation.yCoordinate].isRobotPresent = false;
+          this.tableGrid[robotLocation.yCoordinate][robotLocation.xCoordinate].isRobotPresent = false;
         } else {
           console.error('You cannot move in that direction');
         }
@@ -130,18 +131,3 @@ export class Grid {
     }
   }
 }
-
-// TODO remove this crap
-const robot = new Robot(Direction.NORTH);
-const tableTop = new Grid(4, 4, robot);
-tableTop.initialiseTable();
-tableTop.placeRobot(0, 0, Direction.NORTH);
-console.log('firstLocation', tableTop.getRobotLocation());
-tableTop.move();
-console.log('secondLocation', tableTop.getRobotLocation());
-tableTop.move();
-console.log('thirdLocation', tableTop.getRobotLocation());
-tableTop.turnRobot('right');
-console.log('fourthLocation', tableTop.getRobotLocation());
-tableTop.move();
-console.log('fifthLocation', tableTop.getRobotLocation());
