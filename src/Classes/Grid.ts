@@ -74,10 +74,16 @@ export class Grid {
    * Rotates the robot 90 degrees in the direction that is specified
    * */
   public turnRobot(direction: string): void {
-    if (direction.toUpperCase() === 'LEFT') {
-      this.robot.turnLeft();
-    } else if (direction.toUpperCase() === 'RIGHT') {
-      this.robot.turnRight();
+    if (this.findRobot()) {
+      if (direction.toUpperCase() === 'LEFT') {
+        this.robot.turnLeft();
+        console.log('Rotating left');
+      } else if (direction.toUpperCase() === 'RIGHT') {
+        this.robot.turnRight();
+        console.log('Rotating right');
+      }
+    } else {
+      console.error('Robot must first be placed on grid');
     }
   }
 

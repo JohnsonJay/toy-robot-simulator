@@ -1,4 +1,4 @@
-import * as yargs from 'yargs';
+import { Command } from 'commander';
 import { Grid } from './Classes/Grid';
 import { Robot } from './Classes/Robot';
 import { Direction } from './Interfaces/Direction.interface';
@@ -6,69 +6,49 @@ import { Direction } from './Interfaces/Direction.interface';
 const robot = new Robot(Direction.NORTH);
 const grid = new Grid(4, 4, robot);
 
+const program = new Command();
+
 grid.initialiseGrid();
 
-console.info('Toy Robot Simulator');
+console.log('Toy Robot Simulator');
 
-yargs
-  .command(
-    "PLACE <X>,<Y><F>",
-    "will put the toy robot on the table in position X,Y and facing NORTH, SOUTH, EAST or WEST",
-    {
-      X: {
-        type: "number",
-        demandOption: true,
-        describe: "Column where the robot will be placed"
-      },
-      Y: {
-        type: "number",
-        demandOption: true,
-        describe: "Row where the robot will be placed"
-      },
-      F: {
-        type: "string",
-        demandOption: true,
-        describe: "Direction which the robot will face"
-      }
-    },
-    function (argv) {
-      grid.placeRobot(argv.X, argv.Y, argv.F);
-    }
-  ).argv;
+program
+  .command('PLACE')
+  .description('will put the toy robot on the table in position X,Y and facing NORTH, SOUTH, EAST or WEST')
+  .argument('<x>', 'Column where the robot will be placed')
+  .argument('<y>', 'Row where the robot will be placed')
+  .argument('<f>', 'Direction which the robot will face')
+  .action((x, y, f) => {
+    grid.placeRobot(x, y, f);
+    console.log('Robot was placed', { 1: x, 2: y, 3: f });
+  });
 
-yargs.command(
-  "LEFT",
-  "will rotate the robot 90 degrees in the specified direction without changing",
-  {},
-  function () {
+program
+  .command('LEFT')
+  .description('will rotate the robot 90 degrees in the specified direction without changing')
+  .action(() => {
     grid.turnRobot('LEFT');
-  }
-).argv;
+  });
 
-yargs.command(
-  "RIGHT",
-  "will rotate the robot 90 degrees in the specified direction without changing",
-  {},
-  function () {
+program
+  .command('RIGHT')
+  .description('will rotate the robot 90 degrees in the specified direction without changing')
+  .action(() => {
     grid.turnRobot('RIGHT');
-  }
-).argv;
+  });
 
-yargs.command(
-  "MOVE",
-  "will move the toy robot one unit forward in the direction it is currently facing",
-  {},
-  function () {
+program
+  .command('MOVE')
+  .description('will move the toy robot one unit forward in the direction it is currently facing')
+  .action(() => {
     grid.move();
-  }
-).argv;
+  });
 
-yargs.command(
-  "REPORT",
-  "will announce the X,Y and F of the robot",
-  {},
-  function () {
+program.command('REPORT')
+  .description('will announce the X,Y and F of the robot')
+  .action(() => {
     console.log(grid.getRobotLocation());
-  }
-).argv;
-console.log(yargs.argv);
+  });
+
+program.parse();
+
